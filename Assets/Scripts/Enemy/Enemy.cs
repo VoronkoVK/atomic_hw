@@ -3,80 +3,69 @@ using UnityEngine;
 
 namespace ShootEmUp
 {
-    public sealed class Enemy : MonoBehaviour
+    public sealed class Enemy : Unit
     {
-        public delegate void FireHandler(Vector2 position, Vector2 direction);
-        
-        public event FireHandler OnFire;
+        [SerializeField] private float countdown;
 
-        [SerializeField]
-        public bool isPlayer;
-        
-        [SerializeField]
-        public Transform firePoint;
-        
-        [SerializeField]
-        public int health;
-
-        [SerializeField]
-        public Rigidbody2D _rigidbody;
-
-        [SerializeField]
-        public float speed = 5.0f;
-
-        [SerializeField]
-        private float countdown;
-
-        [NonSerialized]
-        public Player target;
-
-        private Vector2 destination;
+        private Transform _target;
+        private Vector2 _destination;
         private float currentTime;
         private bool isPointReached;
 
         public void Reset()
         {
-            this.currentTime = this.countdown;
+            currentTime = countdown;
         }
-        
-        public void SetDestination(Vector2 endPoint)
+
+        public void SetTarget(Transform target)
         {
-            this.destination = endPoint;
-            this.isPointReached = false;
+            _target = target;
+        }
+
+        public void SetDestination(Vector2 destination)
+        {
+            _destination = destination;
+            isPointReached = false;
         }
 
         private void FixedUpdate()
         {
-            if (this.isPointReached)
+            if (currentTime > 0)
             {
-                //Attack:
-                if (this.target.health <= 0)
-                    return;
+                currentTime -= Time.fixedDeltaTime;
+            }
 
-                this.currentTime -= Time.fixedDeltaTime;
-                if (this.currentTime <= 0)
-                {
-                    Vector2 startPosition = this.firePoint.position;
-                    Vector2 vector = (Vector2) this.target.transform.position - startPosition;
-                    Vector2 direction = vector.normalized;
-                    this.OnFire?.Invoke(startPosition, direction);
-                    
-                    this.currentTime += this.countdown;
-                }
+            if (isPointReached)
+            {
+                FireToTarget();
             }
             else
             {
-                //Move:
-                Vector2 vector = this.destination - (Vector2) this.transform.position;
-                if (vector.magnitude <= 0.25f)
-                {
-                    this.isPointReached = true;
-                    return;
-                }
+                MoveToDestination();
+            }
+        }
 
-                Vector2 direction = vector.normalized * Time.fixedDeltaTime;
-                Vector2 nextPosition = _rigidbody.position + direction * speed;
-                _rigidbody.MovePosition(nextPosition);
+        private void MoveToDestination()
+        {
+            Vector2 vector = _destination - (Vector2)transform.position;
+            if (vector.magnitude <= 0.25f)
+            {
+                isPointReached = true;
+                return;
+            }
+
+            Move(vector.normalized);
+        }
+
+        private void FireToTarget()
+        {
+            if (currentTime <= 0)
+            {
+                Vector2 vector = (Vector2)_target.transform.position - (Vector2)FirePoint.position;
+                Vector2 direction = vector.normalized;
+                Fire(direction);
+
+                currentTime += countdown;
             }
         }
     }

@@ -5,52 +5,33 @@ namespace ShootEmUp
     public sealed class PlayerController : MonoBehaviour
     {
         [SerializeField]
-        private Player character;
+        private Unit _player;
 
-        [SerializeField]
-        private BulletManager bulletManager;
-
-        private bool fireRequired;
-        private float moveDirection;
-
-        private void Awake()
-        {
-            this.character.OnHealthEmpty += _ => Time.timeScale = 0;
-        }
+        private bool _fireRequired;
+        private float _moveDirection;
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space)) 
-                fireRequired = true;
+                _fireRequired = true;
 
             if (Input.GetKey(KeyCode.LeftArrow))
-                this.moveDirection = -1;
+                _moveDirection = -1;
             else if (Input.GetKey(KeyCode.RightArrow))
-                this.moveDirection = 1;
+                _moveDirection = 1;
             else
-                this.moveDirection = 0;
+                _moveDirection = 0;
         }
 
         private void FixedUpdate()
         {
-            if (fireRequired)
+            if (_fireRequired)
             {
-                bulletManager.SpawnBullet(
-                    this.character.firePoint.position,
-                    Color.blue,
-                    (int) PhysicsLayer.PLAYER_BULLET,
-                    1,
-                    true,
-                    this.character.firePoint.rotation * Vector3.up * 3
-                );
-
-                fireRequired = false;
+                _player.Fire();
+                _fireRequired = false;
             }
             
-            Vector2 moveDirection = new Vector2(this.moveDirection, 0);
-            Vector2 moveStep = moveDirection * Time.fixedDeltaTime * character.speed;
-            Vector2 targetPosition = character._rigidbody.position + moveStep;
-            character._rigidbody.MovePosition(targetPosition);
+            _player.Move(new Vector2(_moveDirection, 0));
         }
     }
 }

@@ -15,7 +15,7 @@ namespace ShootEmUp
         private Transform[] attackPositions;
         
         [SerializeField]
-        private Player character;
+        private Unit player;
 
         [SerializeField]
         private Transform worldTransform;
@@ -29,8 +29,7 @@ namespace ShootEmUp
         [SerializeField]
         private BulletManager _bulletSystem;
         
-        private readonly HashSet<Enemy> m_activeEnemies = new();
-        private readonly Queue<Enemy> enemyPool = new();
+        private readonly Queue<Unit> enemyPool = new();
         
         private void Awake()
         {
@@ -46,41 +45,42 @@ namespace ShootEmUp
             while (true)
             {
                 yield return new WaitForSeconds(Random.Range(1, 2));
-                
-                if (!this.enemyPool.TryDequeue(out Enemy enemy))
-                {
-                    enemy = Instantiate(this.prefab, this.container);
-                }
-
-                enemy.transform.SetParent(this.worldTransform);
-
-                Transform spawnPosition = this.RandomPoint(this.spawnPositions);
-                enemy.transform.position = spawnPosition.position;
-
-                Transform attackPosition = this.RandomPoint(this.attackPositions);
-                enemy.SetDestination(attackPosition.position);
-                enemy.target = this.character;
-
-                if (this.m_activeEnemies.Count < 5 && this.m_activeEnemies.Add(enemy))
-                {
-                    enemy.OnFire += this.OnFire;
-                }
+                SpawnEnemy();
             }
         }
 
-        private void FixedUpdate()
+        private void SpawnEnemy()
         {
-            foreach (Enemy enemy in m_activeEnemies.ToArray())
+            Enemy enemy;
+            if (!this.enemyPool.TryDequeue(out Unit unit))
             {
-                if (enemy.health <= 0)
-                {
-                    enemy.OnFire -= this.OnFire;
-                    enemy.transform.SetParent(this.container);
-
-                    m_activeEnemies.Remove(enemy);
-                    this.enemyPool.Enqueue(enemy);
-                }
+                enemy = Instantiate(this.prefab, this.container);
             }
+            else
+            {
+                enemy = (Enemy)unit;
+            }
+
+            enemy.transform.SetParent(this.worldTransform);
+
+            Transform spawnPosition = this.RandomPoint(this.spawnPositions);
+            enemy.transform.position = spawnPosition.position;
+
+            Transform attackPosition = this.RandomPoint(this.attackPositions);
+            enemy.SetDestination(attackPosition.position);
+            enemy.SetTarget(player.transform);
+
+            enemy.OnFire += this.OnFire;
+            enemy.OnHealthEmpty += DestroyEnemy;
+        }
+
+        private void DestroyEnemy(Unit enemy)
+        {
+            enemy.OnFire -= this.OnFire;
+            enemy.OnHealthEmpty -= DestroyEnemy;
+            enemy.transform.SetParent(this.container);
+
+            this.enemyPool.Enqueue(enemy);
         }
 
         private void OnFire(Vector2 position, Vector2 direction)
