@@ -37,7 +37,7 @@ namespace ShootEmUp
 
             if (isPointReached)
             {
-                FireToTarget();
+                Fire();
             }
             else
             {
@@ -57,13 +57,13 @@ namespace ShootEmUp
             Move(vector.normalized);
         }
 
-        private void FireToTarget()
+        public override void Fire()
         {
             if (currentTime <= 0)
             {
                 Vector2 vector = (Vector2)_target.transform.position - (Vector2)FirePoint.position;
                 Vector2 direction = vector.normalized;
-                Fire(direction);
+                BulletManager.SpawnBullet(BulletConfig, FirePoint.position, direction);
 
                 currentTime += countdown;
             }

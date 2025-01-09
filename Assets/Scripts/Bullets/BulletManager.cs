@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ShootEmUp
 {
@@ -45,14 +46,7 @@ namespace ShootEmUp
             }
         }
 
-        public void SpawnBullet(
-            Vector2 position,
-            Color color,
-            int physicsLayer,
-            int damage,
-            bool isPlayer,
-            Vector2 velocity
-        )
+        public void SpawnBullet(BulletConfig bulletConfig, Vector2 position, Vector2 direction)
         {
             if (this.m_bulletPool.TryDequeue(out var bullet))
             {
@@ -63,12 +57,7 @@ namespace ShootEmUp
                 bullet = Instantiate(this.prefab, this.worldTransform);
             }
 
-            bullet.transform.position = position;
-            bullet.spriteRenderer.color = color;
-            bullet.gameObject.layer = physicsLayer;
-            bullet.damage = damage;
-            bullet.isPlayer = isPlayer;
-            bullet.rigidbody2D.velocity = velocity;
+            bullet.Init(bulletConfig, position, direction);
 
             if (m_activeBullets.Add(bullet))
             {
@@ -78,7 +67,6 @@ namespace ShootEmUp
 
         private void OnBulletCollision(Bullet bullet, Collision2D collision)
         {
-            this.DealDamage(bullet, collision.gameObject);
             this.RemoveBullet(bullet);
         }
 
@@ -92,19 +80,6 @@ namespace ShootEmUp
             }
         }
 
-        private void DealDamage(Bullet bullet, GameObject other)
-        {
-            int damage = bullet.damage;
-            if (damage <= 0)
-                return;
-            
-            if (other.TryGetComponent(out Unit unit))
-            {
-                if (bullet.isPlayer != unit.IsPlayer)
-                {
-                    unit.TakeDamage(damage);
-                }
-            }
-        }
+        
     }
 }

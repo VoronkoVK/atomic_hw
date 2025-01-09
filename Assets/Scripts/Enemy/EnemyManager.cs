@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -27,7 +26,8 @@ namespace ShootEmUp
         private Enemy prefab;
         
         [SerializeField]
-        private BulletManager _bulletSystem;
+        private BulletManager _bulletManager;
+
         
         private readonly Queue<Unit> enemyPool = new();
         
@@ -69,30 +69,17 @@ namespace ShootEmUp
             Transform attackPosition = this.RandomPoint(this.attackPositions);
             enemy.SetDestination(attackPosition.position);
             enemy.SetTarget(player.transform);
+            enemy.SetBulletManager(_bulletManager);
 
-            enemy.OnFire += this.OnFire;
             enemy.OnHealthEmpty += DestroyEnemy;
         }
 
         private void DestroyEnemy(Unit enemy)
         {
-            enemy.OnFire -= this.OnFire;
             enemy.OnHealthEmpty -= DestroyEnemy;
             enemy.transform.SetParent(this.container);
 
             this.enemyPool.Enqueue(enemy);
-        }
-
-        private void OnFire(Vector2 position, Vector2 direction)
-        {
-            _bulletSystem.SpawnBullet(
-                position,
-                Color.red,
-                (int) PhysicsLayer.ENEMY_BULLET,
-                1,
-                false,
-                direction * 2
-            );
         }
 
         private Transform RandomPoint(Transform[] points)

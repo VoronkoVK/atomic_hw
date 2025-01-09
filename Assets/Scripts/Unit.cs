@@ -9,16 +9,13 @@ namespace ShootEmUp
         public event Action<Unit, int> OnHealthChanged;
         public event Action<Unit> OnHealthEmpty;
         
-        public delegate void FireHandler(Vector2 position, Vector2 direction);
-        public event FireHandler OnFire;
-
         public bool IsPlayer => _isPlayer;
         [SerializeField]
         private bool _isPlayer;
         
-        public Transform FirePoint => _firePoint;
         [SerializeField]
         private Transform _firePoint;
+        public Transform FirePoint => _firePoint;
         
         [SerializeField]
         private int _health;
@@ -28,6 +25,19 @@ namespace ShootEmUp
 
         [SerializeField]
         private float _speed = 5.0f;
+        
+        [SerializeField]
+        private BulletConfig _bulletConfig;
+        public BulletConfig BulletConfig => _bulletConfig;
+        
+        [SerializeField]
+        private BulletManager _bulletManager;
+        public BulletManager BulletManager => _bulletManager;
+
+        public void SetBulletManager(BulletManager bulletManager)
+        {
+            _bulletManager = bulletManager;
+        }
 
         public void Move(Vector2 direction)
         {
@@ -46,15 +56,10 @@ namespace ShootEmUp
                 OnHealthEmpty?.Invoke(this);
             }
         }
-
-        public void Fire()
-        {
-            OnFire?.Invoke(_firePoint.position, _firePoint.rotation * Vector3.up);
-        }
         
-        public void Fire(Vector2 direction)
+        public virtual void Fire()
         {
-            OnFire?.Invoke(_firePoint.position, direction);
+            _bulletManager.SpawnBullet(_bulletConfig, _firePoint.position, _firePoint.rotation * Vector3.up);
         }
     }
 }

@@ -424,7 +424,7 @@ MonoBehaviour:
   worldTransform: {fileID: 1683128698}
   container: {fileID: 178513672}
   prefab: {fileID: 102605417607457000, guid: 87fe189881a524806800482ac8eaaa83, type: 3}
-  _bulletSystem: {fileID: 363245577}
+  _bulletManager: {fileID: 363245577}
 --- !u!1 &883274639
 GameObject:
   m_ObjectHideFlags: 0
@@ -861,6 +861,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bulletManager: {fileID: 363245577}
   _player: {fileID: 4414282821800802409}
+  _bulletConfig: {fileID: 0}
 --- !u!1 &61006797492197339
 GameObject:
   m_ObjectHideFlags: 0
@@ -1245,6 +1246,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1337844002}
     m_Modifications:
+    - target: {fileID: 611920610596375907, guid: 9699e7e809fd44b2bbf3d30c951ecbd2,
+        type: 3}
+      propertyPath: _bulletManager
+      value: 
+      objectReference: {fileID: 363245577}
     - target: {fileID: 809540891661548872, guid: 9699e7e809fd44b2bbf3d30c951ecbd2,
         type: 3}
       propertyPath: m_LocalPosition.x
