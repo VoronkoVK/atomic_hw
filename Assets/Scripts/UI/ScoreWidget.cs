@@ -1,34 +1,35 @@
 ﻿using System;
-using TMPro;
+using Modules;
+using SnakeGame;
 using Zenject;
 
-namespace DefaultNamespace.UI
+namespace DefaultNamespace
 {
     public class ScoreWidget : IInitializable, IDisposable
     {
-        private readonly TMP_Text _scoreText;
-        private readonly IScoreManager _scoreManager;
+        private readonly IScore _score;
+        private readonly IGameUI _ui;
 
-        public ScoreWidget(TMP_Text scoreText, IScoreManager scoreManager)
+        public ScoreWidget(IScore score, IGameUI ui)
         {
-            _scoreText = scoreText;
-            _scoreManager = scoreManager;
+            _score = score;
+            _ui = ui;
         }
 
         public void Initialize()
         {
-            _scoreManager.OnScoreChanged += UpdateScore;
-            UpdateScore(_scoreManager.Score);
+            _score.OnStateChanged += UpdateScore;
+            UpdateScore(_score.Current);
         }
 
         public void Dispose()
         {
-            _scoreManager.OnScoreChanged -= UpdateScore;
+            _score.OnStateChanged -= UpdateScore;
         }
 
         private void UpdateScore(int score)
         {
-            _scoreText.text = $"Score: {score}";
+            _ui.SetScore(score.ToString());
         }
     }
 }

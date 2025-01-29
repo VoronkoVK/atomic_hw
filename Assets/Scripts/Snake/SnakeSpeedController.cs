@@ -1,38 +1,35 @@
 ﻿using System;
+using DefaultNamespace;
 using Modules;
-using SnakeGame;
-using TMPro;
-using UnityEngine;
 using Zenject;
 
 namespace DefaultNamespace
 {
-    public class LevelWidget : IInitializable, IDisposable
+    public class SnakeSpeedController : IInitializable, IDisposable
     {
         private readonly IDifficulty _difficulty;
-        private readonly IGameUI _ui;
+        private readonly ISnake _snake;
 
-
-        public LevelWidget(IDifficulty difficulty, IGameUI ui)
+        public SnakeSpeedController(IDifficulty difficulty, ISnake snake)
         {
             _difficulty = difficulty;
-            _ui = ui;
+            _snake = snake;
         }
 
         public void Initialize()
         {
             _difficulty.OnStateChanged += OnDifficultyChanged;
-            OnDifficultyChanged();
         }
 
         public void Dispose()
         {
             _difficulty.OnStateChanged -= OnDifficultyChanged;
+
         }
 
         private void OnDifficultyChanged()
         {
-            _ui.SetDifficulty(_difficulty.Current, _difficulty.Max);
+            _snake.SetSpeed(_difficulty.Current);
         }
     }
 }

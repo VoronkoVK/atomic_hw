@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b9184744dd24fd4a1033fdd79e5d834, type: 3}
   m_Name: LevelConfig
   m_EditorClassIdentifier: 
-  StartLevel: 1
-  FinishLevel: 3
+  MaxLevel: 3
   CoinsOnLevel: 2

@@ -4,11 +4,11 @@ using Zenject;
 
 namespace DefaultNamespace
 {
-    public class SnakeController : ITickable
+    public class SnakeInputController : ITickable
     {
         private readonly ISnake _snake;
 
-        public SnakeController(ISnake snake)
+        public SnakeInputController(ISnake snake)
         {
             _snake = snake;
         }

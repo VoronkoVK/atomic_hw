@@ -459,12 +459,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _snake: {fileID: 1446817787}
+  _gameUI: {fileID: 1764093826}
   _coinPref: {fileID: 1221131666036007499, guid: f37c023e6b8b06149a4215320dd7e482, type: 3}
   _levelConfig: {fileID: 11400000, guid: 6ce8b1bba24781b419c0526ec64d3577, type: 2}
-  _levelText: {fileID: 1202478200}
-  _scoreText: {fileID: 1914371282}
-  _winScreen: {fileID: 1178697326}
-  _loseScreen: {fileID: 1338628983}
   _worldTransform: {fileID: 1431199844}
 --- !u!114 &911590273
 MonoBehaviour:

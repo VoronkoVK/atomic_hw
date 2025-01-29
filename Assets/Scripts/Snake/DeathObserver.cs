@@ -4,19 +4,19 @@ using SnakeGame;
 using UnityEngine;
 using Zenject;
 
-namespace DefaultNamespace.Observers
+namespace DefaultNamespace
 {
     public class DeathObserver : IInitializable, IDisposable
     {
         private readonly ISnake _snake;
         private readonly IWorldBounds _bounds;
-        private readonly IGameStateManager gameStateManager;
+        private readonly IGameCycle _gameCycle;
         
-        public DeathObserver(ISnake snake, IWorldBounds bounds, IGameStateManager gameStateManager)
+        public DeathObserver(ISnake snake, IWorldBounds bounds, IGameCycle gameCycle)
         {
             _snake = snake;
             _bounds = bounds;
-            this.gameStateManager = gameStateManager;
+            this._gameCycle = gameCycle;
         }
 
         public void Initialize()
@@ -41,7 +41,7 @@ namespace DefaultNamespace.Observers
 
         private void Death()
         {
-            gameStateManager.Lose();
+            _gameCycle.Lose();
         }
     }
 }

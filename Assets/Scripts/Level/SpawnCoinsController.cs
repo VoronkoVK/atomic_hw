@@ -1,22 +1,21 @@
 ﻿using System;
 using Modules;
-using SnakeGame;
-using TMPro;
-using UnityEngine;
 using Zenject;
 
 namespace DefaultNamespace
 {
-    public class LevelWidget : IInitializable, IDisposable
+    public class SpawnCoinsController : IInitializable, IDisposable
     {
+        private readonly ICoinsManager _coinsManager;
         private readonly IDifficulty _difficulty;
-        private readonly IGameUI _ui;
+        private readonly int _coins;
 
-
-        public LevelWidget(IDifficulty difficulty, IGameUI ui)
+        public SpawnCoinsController(ICoinsManager coinsManager, IDifficulty difficulty, LevelConfig levelConfig)
         {
+            _coinsManager = coinsManager;
             _difficulty = difficulty;
-            _ui = ui;
+
+            _coins = levelConfig.CoinsOnLevel;
         }
 
         public void Initialize()
@@ -32,7 +31,7 @@ namespace DefaultNamespace
 
         private void OnDifficultyChanged()
         {
-            _ui.SetDifficulty(_difficulty.Current, _difficulty.Max);
+            _coinsManager.Spawn(_coins);
         }
     }
 }

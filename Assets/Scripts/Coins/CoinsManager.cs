@@ -10,15 +10,18 @@ namespace DefaultNamespace
     public interface ICoinsManager
     {
         event Action OnAllCoinsCollected;
+        event Action<Coin> OnCoinCollected;
+
         void Spawn(int amount);
-        List<Coin> GetLevelCoins();
-        void Collect(Coin coin);
+
+        void TryCollect(Vector2Int position);
     }
 
     public class CoinsManager : ICoinsManager
     {
         public event Action OnAllCoinsCollected;
-        
+        public event Action<Coin> OnCoinCollected;
+
         private readonly CoinsPool _coinsPool;
         private readonly IWorldBounds _worldBounds;
 
@@ -40,20 +43,29 @@ namespace DefaultNamespace
             }
         }
 
-        public List<Coin> GetLevelCoins()
+        public void TryCollect(Vector2Int position)
         {
-            return new List<Coin>(_coins);
-        }
-
-        public void Collect(Coin coin)
-        {
-            _coins.Remove(coin);
-            _coinsPool.Despawn(coin);
+            var toRemove = new List<Coin>();
+            foreach (var coin in _coins)
+            {
+                if (coin.Position == position)
+                {
+                    Collect(coin);
+                    toRemove.Add(coin);
+                }
+            }
             
+            _coins.RemoveAll(coin => toRemove.Contains(coin));
             if (_coins.IsEmpty())
             {
                 OnAllCoinsCollected?.Invoke();
             }
+        }
+
+        private void Collect(Coin coin)
+        {
+            _coinsPool.Despawn(coin);
+            OnCoinCollected?.Invoke(coin);
         }
     }
 }
