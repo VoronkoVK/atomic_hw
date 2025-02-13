@@ -1,3 +1,4 @@
+using Game.Presenters.PlanetPopup;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +13,28 @@ namespace Game.Presenters
         public override void InstallBindings()
         {
             //TODO:
+            
+            Container
+                .BindInterfacesAndSelfTo<PlanetPopupPresenter>()
+                .AsSingle();
+            
+            Container
+                .BindInterfacesAndSelfTo<PlanetPopupShower>()
+                .AsSingle();
+
+            Container
+                .BindInterfacesAndSelfTo<PlanetListPresenter>()
+                .AsSingle()
+                .NonLazy();
+
+            Container
+                .BindInterfacesAndSelfTo<MoneyPresenter>()
+                .AsSingle()
+                .NonLazy();
+
+            
+
+            
         }
     }
 }
